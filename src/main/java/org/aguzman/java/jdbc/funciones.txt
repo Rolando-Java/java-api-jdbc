@@ -1,0 +1,77 @@
+--tablas
+CREATE TABLE java_curso.productos (
+	id serial NOT NULL,
+	nombre varchar(45) NULL,
+	precio int4 NULL,
+	fecha_registro timestamp NULL,
+	categoria_id int4 NULL,
+	CONSTRAINT productos_pk PRIMARY KEY (id),
+	CONSTRAINT productos_fk_categoria_id FOREIGN KEY (categoria_id) REFERENCES java_curso.categorias(id)
+	ON DELETE CASCADE
+);
+
+CREATE TABLE java_curso.categorias (
+	id serial NOT NULL,
+	nombre varchar(45) NULL,
+	CONSTRAINT categorias_pk PRIMARY KEY (id)
+);
+
+--funciones
+create or replace function func_select_categorias()
+returns refcursor
+as
+$$
+declare
+	mycurs  refcursor;
+begin
+	open mycurs for select c.id, c.nombre from java_curso.categorias c;
+	return mycurs ;
+end
+$$
+language plpgsql
+
+create or replace function func_select_categoria_by_id(id_categoria bigint)
+returns refcursor
+as
+$$
+declare
+	mycurs refcursor ;
+begin
+	open mycurs for select c.id, c.nombre from java_curso.categorias c where c.id = id_categoria;
+	return mycurs ;
+end
+$$
+language plpgsql
+
+create or replace function func_insert_categoria(nombre_categoria varchar(45))
+returns bigint
+as
+$$
+declare
+	id_categoria bigint := 0;
+begin
+	insert into java_curso.categorias(nombre) values(nombre_categoria) returning id into id_categoria;
+	return id_categoria ;
+end
+$$
+language plpgsql
+
+create or replace function func_update_categoria_by_id(nombre_categoria varchar(45), id_categoria bigint)
+returns void
+as
+$$
+begin
+	update java_curso.categorias set nombre=nombre_categoria where id=id_categoria;
+end
+$$
+language plpgsql
+
+create or replace function func_delete_categoria_by_id(id_categoria bigint)
+returns void
+as
+$$
+begin
+	delete from java_curso.categorias where id =id_categoria;
+end
+$$
+language plpgsql
