@@ -72,10 +72,10 @@ public class CategoriaRepositorioImpl implements Repositorio<Categoria> {
     public Categoria guardar(Categoria categoria) throws SQLException {
         try (
                 CallableStatement callableStatement = this.connection
-                        .prepareCall((!Objects.isNull(categoria.getId())) ? FUNC_UPDATE_CATEGORIA_BY_ID : FUNC_INSERT_CATEGORIA)
+                        .prepareCall((Objects.nonNull(categoria.getId())) ? FUNC_UPDATE_CATEGORIA_BY_ID : FUNC_INSERT_CATEGORIA)
         ) {
 
-            if (!Objects.isNull(categoria.getId())) {
+            if (Objects.nonNull(categoria.getId())) {
                 callableStatement.setString(1, categoria.getNombre());
                 callableStatement.setLong(2, categoria.getId());
             } else {

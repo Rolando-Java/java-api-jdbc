@@ -25,7 +25,7 @@ public class ProductoRepositorioImpl implements Repositorio<Producto> {
     public ProductoRepositorioImpl() {
 
     }
-    
+
     @Override
     public void setConnection(Connection connection) {
         this.connection = connection;
@@ -63,14 +63,14 @@ public class ProductoRepositorioImpl implements Repositorio<Producto> {
     public Producto guardar(Producto producto) throws SQLException {
         try (
                 PreparedStatement preparedStatement = this.connection
-                        .prepareStatement((!Objects.isNull(producto.getId())) ? SQL_UPDATE_PRODUCTO_BY_ID
+                        .prepareStatement((Objects.nonNull(producto.getId())) ? SQL_UPDATE_PRODUCTO_BY_ID
                                 : SQL_INSERT_PRODUCTO, Statement.RETURN_GENERATED_KEYS)
         ) {
             preparedStatement.setString(1, producto.getNombre());
             preparedStatement.setBigDecimal(2, producto.getPrecio());
             preparedStatement.setLong(3, producto.getCategoria().getId());
 
-            if (!Objects.isNull(producto.getId())) preparedStatement.setLong(4, producto.getId());
+            if (Objects.nonNull(producto.getId())) preparedStatement.setLong(4, producto.getId());
             else preparedStatement.setTimestamp(4, Timestamp.valueOf(producto.getFechaRegistro()));
 
             preparedStatement.executeUpdate();
